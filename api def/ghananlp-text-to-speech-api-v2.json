@@ -1,0 +1,317 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "Text-To-Speech API",
+        "description": "Text-to-Speech API for synthesizing text into audio for 32+ languages.\n[Beta version] Minor updates may be made to this API before being finalised\n\n",
+        "version": "v2"
+    },
+    "servers": [
+        {
+            "url": "https://translation-api.ghananlp.org/tts/v2"
+        }
+    ],
+    "paths": {
+        "/languages": {
+            "get": {
+                "summary": "Get list of all supported languages",
+                "description": "Get list of all supported languages",
+                "operationId": "get-list-of-all-supported-languages",
+                "responses": {
+                    "200": {
+                        "description": "List of languages supported",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Language_listing"
+                                },
+                                "example": {
+                                    "languages": {
+                                        "Adangme": "ada",
+                                        "Akuapem Twi": "atw",
+                                        "Asante Twi": "twi",
+                                        "Dagbani": "dag",
+                                        "Dagaare": "dga",
+                                        "Ewe": "ewe",
+                                        "English": "",
+                                        "Fante": "fat",
+                                        "French": "fra",
+                                        "Ga": "gaa",
+                                        "Gonja": "gjn",
+                                        "Gurene": "gur",
+                                        "Hausa": "hau",
+                                        "Igbo": "ibo",
+                                        "Kasem": "xsm",
+                                        "Kikuyu": "kik",
+                                        "Konkomba (Likpakpaanl)": "xon",
+                                        "Konkomba (Likoonli)": "lxn",
+                                        "Krio": "kri",
+                                        "Kusaal": "kus",
+                                        "Luo": "luo",
+                                        "Mampruli": "maw",
+                                        "Mende": "men",
+                                        "Meru/Kimeru": "mer",
+                                        "Nzema": "nzi",
+                                        "Pidgin": "pcm",
+                                        "Shona": "sna",
+                                        "Swahili": "swa",
+                                        "Temne": "tem",
+                                        "Wali": "wlx",
+                                        "Wolof": "wol",
+                                        "Yoruba": "yor"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/speakers": {
+            "get": {
+                "summary": "Get list of all available speakers",
+                "description": "Get list of all available speakers",
+                "operationId": "get-list-of-all-available-speakers",
+                "responses": {
+                    "200": {
+                        "description": "A listing of available speakers",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Speakers_listing"
+                                },
+                                "example": {
+                                    "speakers": {
+                                        "Multilingual": [
+                                            "male_low",
+                                            "male_high",
+                                            "female"
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/synthesize": {
+            "post": {
+                "summary": "Synthesize text",
+                "description": "Synthesize text",
+                "operationId": "67b9c893fc03f0ed64272f2e",
+                "requestBody": {
+                    "description": "The text to be synthesized should be provided in the text field\nUse the /languages and /speakers endpoints to get the available languages and speakers for the payload",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TTS_JSON_Request"
+                            },
+                            "example": {
+                                "text": "Ɛte sɛn?",
+                                "language": "twi",
+                                "speaker_id": "male_low",
+                                "stream": true,
+                                "format": "wav"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "An audio file in WAV format",
+                        "content": {
+                            "audio/wav": {}
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Speakers_listing": {
+                "type": "object",
+                "properties": {
+                    "speakers": {
+                        "type": "object",
+                        "properties": {
+                            "Multilingual": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                },
+                "x-apim-schema-name": "Speakers listing"
+            },
+            "Language_listing": {
+                "type": "object",
+                "properties": {
+                    "languages": {
+                        "type": "object",
+                        "properties": {
+                            "Adangme": {
+                                "type": "string"
+                            },
+                            "Akuapem Twi": {
+                                "type": "string"
+                            },
+                            "Asante Twi": {
+                                "type": "string"
+                            },
+                            "Dagbani": {
+                                "type": "string"
+                            },
+                            "Dagaare": {
+                                "type": "string"
+                            },
+                            "Ewe": {
+                                "type": "string"
+                            },
+                            "English": {
+                                "type": "string"
+                            },
+                            "Fante": {
+                                "type": "string"
+                            },
+                            "French": {
+                                "type": "string"
+                            },
+                            "Ga": {
+                                "type": "string"
+                            },
+                            "Gonja": {
+                                "type": "string"
+                            },
+                            "Gurene": {
+                                "type": "string"
+                            },
+                            "Hausa": {
+                                "type": "string"
+                            },
+                            "Igbo": {
+                                "type": "string"
+                            },
+                            "Kasem": {
+                                "type": "string"
+                            },
+                            "Kikuyu": {
+                                "type": "string"
+                            },
+                            "Konkomba (Likpakpaanl)": {
+                                "type": "string"
+                            },
+                            "Konkomba (Likoonli)": {
+                                "type": "string"
+                            },
+                            "Krio": {
+                                "type": "string"
+                            },
+                            "Kusaal": {
+                                "type": "string"
+                            },
+                            "Luo": {
+                                "type": "string"
+                            },
+                            "Mampruli": {
+                                "type": "string"
+                            },
+                            "Mende": {
+                                "type": "string"
+                            },
+                            "Meru/Kimeru": {
+                                "type": "string"
+                            },
+                            "Nzema": {
+                                "type": "string"
+                            },
+                            "Pidgin": {
+                                "type": "string"
+                            },
+                            "Shona": {
+                                "type": "string"
+                            },
+                            "Swahili": {
+                                "type": "string"
+                            },
+                            "Temne": {
+                                "type": "string"
+                            },
+                            "Wali": {
+                                "type": "string"
+                            },
+                            "Wolof": {
+                                "type": "string"
+                            },
+                            "Yoruba": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "x-apim-schema-name": "Language listing"
+            },
+            "TTS_JSON_Request": {
+                "required": [
+                    "text",
+                    "language"
+                ],
+                "type": "object",
+                "properties": {
+                    "text": {
+                        "type": "string",
+                        "description": "The input text in the provided language to create a synthesized audio of"
+                    },
+                    "language": {
+                        "type": "string"
+                    },
+                    "speaker_id": {
+                        "type": "string"
+                    },
+                    "stream": {
+                        "type": "boolean"
+                    },
+                    "format": {
+                        "enum": [
+                            "mp3",
+                            "wav",
+                            "ogg"
+                        ],
+                        "type": "string",
+                        "description": "The format of the audio response. Options are wav, mp3 and ogg"
+                    }
+                },
+                "example": {
+                    "text": "Wo ho te sɛn?",
+                    "language": "twi",
+                    "speaker_id": "male_low",
+                    "stream": true,
+                    "format": "wav"
+                },
+                "x-apim-schema-name": "TTS JSON Request"
+            }
+        },
+        "securitySchemes": {
+            "apiKeyHeader": {
+                "type": "apiKey",
+                "name": "Ocp-Apim-Subscription-Key",
+                "in": "header"
+            },
+            "apiKeyQuery": {
+                "type": "apiKey",
+                "name": "subscription-key",
+                "in": "query"
+            }
+        }
+    },
+    "security": [
+        {
+            "apiKeyHeader": []
+        },
+        {
+            "apiKeyQuery": []
+        }
+    ]
+}
