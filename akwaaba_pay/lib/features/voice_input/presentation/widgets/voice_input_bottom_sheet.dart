@@ -190,24 +190,27 @@ class _LanguageSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: LanguageConstants.supportedLanguages.entries.map((entry) {
-        final isSelected = entry.key == selected;
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: ChoiceChip(
-            label: Text(entry.value),
-            selected: isSelected,
-            onSelected: (_) => onChanged(entry.key),
-            selectedColor: AppColors.primary.withValues(alpha: 0.2),
-            labelStyle: TextStyle(
-              color: isSelected
-                  ? AppColors.primaryDark
-                  : AppColors.textSecondary,
-              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-            ),
-          ),
-        );
-      }).toList(),
+      children: LanguageConstants.supportedLanguages.entries
+          .where((entry) => entry.key != 'en') // ASR doesn't support English
+          .map((entry) {
+            final isSelected = entry.key == selected;
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: ChoiceChip(
+                label: Text(entry.value),
+                selected: isSelected,
+                onSelected: (_) => onChanged(entry.key),
+                selectedColor: AppColors.primary.withValues(alpha: 0.2),
+                labelStyle: TextStyle(
+                  color: isSelected
+                      ? AppColors.primaryDark
+                      : AppColors.textSecondary,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                ),
+              ),
+            );
+          })
+          .toList(),
     );
   }
 }

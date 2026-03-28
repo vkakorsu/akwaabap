@@ -60,4 +60,25 @@ class LanguageConstants {
     'aduonum': 50,
     'ɔha': 100,
   };
+
+  // English number words
+  static const Map<String, int> englishNumbers = {
+    'one': 1,
+    'two': 2,
+    'three': 3,
+    'four': 4,
+    'five': 5,
+    'six': 6,
+    'seven': 7,
+    'eight': 8,
+    'nine': 9,
+    'ten': 10,
+    'eleven': 11,
+    'twelve': 12,
+    'twenty': 20,
+    'thirty': 30,
+    'forty': 40,
+    'fifty': 50,
+    'hundred': 100,
+  };
 }

@@ -24,7 +24,8 @@ class VoiceCommandParser {
   }
 
   TransactionType _detectTransactionType(String text, String language) {
-    final keywords = LanguageConstants.transactionKeywords[language] ??
+    final keywords =
+        LanguageConstants.transactionKeywords[language] ??
         LanguageConstants.transactionKeywords['en']!;
 
     // Check for sale keywords
@@ -50,11 +51,32 @@ class VoiceCommandParser {
   }
 
   double? _extractAmount(String text) {
+    // First check for word numbers (English)
+    for (final entry in LanguageConstants.englishNumbers.entries) {
+      if (text.contains(entry.key)) {
+        // Check if it's followed by currency indicators
+        final pattern = RegExp(
+          r'${entry.key}\s*(?:cedis?|ghana\s*cedis?|ghc|gh₵|sidi|sika|₵)',
+          caseSensitive: false,
+        );
+        if (pattern.hasMatch(text) ||
+            RegExp(
+              r'(?:cedis?|ghana\s*cedis?|ghc|gh₵|sidi|sika|₵)\s*${entry.key}',
+              caseSensitive: false,
+            ).hasMatch(text)) {
+          return entry.value.toDouble();
+        }
+      }
+    }
+
     // Match patterns like: GH₵5, GH₵5.00, ₵5, ₵5.00, GHC5, 5 cedis, 5 ghana cedis
     final patterns = [
       RegExp(r'gh[₵c]\s*(\d+(?:\.\d{1,2})?)', caseSensitive: false),
       RegExp(r'[₵]\s*(\d+(?:\.\d{1,2})?)'),
-      RegExp(r'(\d+(?:\.\d{1,2})?)\s*(?:cedis?|ghana\s*cedis?|ghc|gh₵)', caseSensitive: false),
+      RegExp(
+        r'(\d+(?:\.\d{1,2})?)\s*(?:cedis?|ghana\s*cedis?|ghc|gh₵)',
+        caseSensitive: false,
+      ),
       RegExp(r'(\d+(?:\.\d{1,2})?)\s*(?:sidi|sika)', caseSensitive: false),
       // Fallback: just find a number if no currency symbol
       RegExp(r'(\d+(?:\.\d{1,2})?)'),
@@ -80,7 +102,10 @@ class VoiceCommandParser {
 
     // Check for numeric quantities with item context
     final qtyPatterns = [
-      RegExp(r'(\d+)\s*(?:bottles?|pieces?|bags?|boxes?|packs?|items?)', caseSensitive: false),
+      RegExp(
+        r'(\d+)\s*(?:bottles?|pieces?|bags?|boxes?|packs?|items?)',
+        caseSensitive: false,
+      ),
       RegExp(r'(\d+)\s*(?:no\b|number)', caseSensitive: false),
     ];
 
@@ -96,7 +121,8 @@ class VoiceCommandParser {
   }
 
   String? _extractItemName(String text, String language, TransactionType type) {
-    final keywords = LanguageConstants.transactionKeywords[language] ??
+    final keywords =
+        LanguageConstants.transactionKeywords[language] ??
         LanguageConstants.transactionKeywords['en']!;
 
     // Get all action keywords to remove from text
@@ -111,13 +137,31 @@ class VoiceCommandParser {
     }
 
     // Remove amount patterns
-    cleaned = cleaned.replaceAll(RegExp(r'gh[₵c]\s*\d+(?:\.\d{1,2})?', caseSensitive: false), '');
+    cleaned = cleaned.replaceAll(
+      RegExp(r'gh[₵c]\s*\d+(?:\.\d{1,2})?', caseSensitive: false),
+      '',
+    );
     cleaned = cleaned.replaceAll(RegExp(r'[₵]\s*\d+(?:\.\d{1,2})?'), '');
-    cleaned = cleaned.replaceAll(RegExp(r'\d+(?:\.\d{1,2})?\s*(?:cedis?|ghana\s*cedis?|ghc|gh₵)', caseSensitive: false), '');
-    cleaned = cleaned.replaceAll(RegExp(r'\d+\s*(?:bottles?|pieces?|bags?|boxes?|packs?)', caseSensitive: false), '');
+    cleaned = cleaned.replaceAll(
+      RegExp(
+        r'\d+(?:\.\d{1,2})?\s*(?:cedis?|ghana\s*cedis?|ghc|gh₵)',
+        caseSensitive: false,
+      ),
+      '',
+    );
+    cleaned = cleaned.replaceAll(
+      RegExp(
+        r'\d+\s*(?:bottles?|pieces?|bags?|boxes?|packs?)',
+        caseSensitive: false,
+      ),
+      '',
+    );
 
     // Remove common filler words
-    cleaned = cleaned.replaceAll(RegExp(r'\b(me|mi|ma|a|the|for|fi|na|to)\b', caseSensitive: false), '');
+    cleaned = cleaned.replaceAll(
+      RegExp(r'\b(me|mi|ma|a|the|for|fi|na|to)\b', caseSensitive: false),
+      '',
+    );
 
     // Clean up whitespace
     cleaned = cleaned.replaceAll(RegExp(r'\s+'), ' ').trim();
@@ -146,7 +190,11 @@ class VoiceCommandParser {
     return null;
   }
 
-  double _calculateConfidence(TransactionType type, double? amount, String? itemName) {
+  double _calculateConfidence(
+    TransactionType type,
+    double? amount,
+    String? itemName,
+  ) {
     double confidence = 0.0;
     if (type != TransactionType.unknown) confidence += 0.4;
     if (amount != null && amount > 0) confidence += 0.4;
