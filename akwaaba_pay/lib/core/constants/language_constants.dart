@@ -49,6 +49,7 @@ class LanguageConstants {
     'mmiɛnsa': 3,
     'nan': 4,
     'num': 5,
+    'enum': 5, // Also accepts 'enum' variant
     'nsia': 6,
     'nson': 7,
     'nwɔtwe': 8,

@@ -136,7 +136,10 @@ class VoiceCommandParser {
       cleaned = cleaned.replaceAll(keyword, '');
     }
 
-    // Remove amount patterns
+    // Remove amount patterns including Twi number words
+    for (final number in LanguageConstants.twiNumbers.keys) {
+      cleaned = cleaned.replaceAll(number, '');
+    }
     cleaned = cleaned.replaceAll(
       RegExp(r'gh[₵c]\s*\d+(?:\.\d{1,2})?', caseSensitive: false),
       '',
