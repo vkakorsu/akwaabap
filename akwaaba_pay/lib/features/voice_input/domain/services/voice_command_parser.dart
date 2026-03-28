@@ -24,48 +24,57 @@ class VoiceCommandParser {
   }
 
   TransactionType _detectTransactionType(String text, String language) {
+    final lowerText = text.toLowerCase();
     final keywords =
         LanguageConstants.transactionKeywords[language] ??
         LanguageConstants.transactionKeywords['en']!;
 
-    // Check for sale keywords
+    // Check for sale keywords with more flexible matching
     final sellKeywords = keywords['sell'] ?? [];
     for (final keyword in sellKeywords) {
-      if (text.contains(keyword)) return TransactionType.sale;
+      if (lowerText.contains(keyword.toLowerCase()))
+        return TransactionType.sale;
     }
 
     // Check for expense keywords
     final expenseKeywords = keywords['expense'] ?? [];
     final paidKeywords = keywords['paid'] ?? [];
     for (final keyword in [...expenseKeywords, ...paidKeywords]) {
-      if (text.contains(keyword)) return TransactionType.expense;
+      if (lowerText.contains(keyword.toLowerCase()))
+        return TransactionType.expense;
     }
 
     // Check for received (treat as sale/income)
     final receivedKeywords = keywords['received'] ?? [];
     for (final keyword in receivedKeywords) {
-      if (text.contains(keyword)) return TransactionType.sale;
+      if (lowerText.contains(keyword.toLowerCase()))
+        return TransactionType.sale;
+    }
+
+    // Check for buy keywords (expense)
+    final buyKeywords = keywords['buy'] ?? [];
+    for (final keyword in buyKeywords) {
+      if (lowerText.contains(keyword.toLowerCase()))
+        return TransactionType.expense;
     }
 
     return TransactionType.unknown;
   }
 
   double? _extractAmount(String text) {
-    // First check for word numbers (English)
+    final lowerText = text.toLowerCase();
+
+    // First check for word numbers (English) - with or without currency
     for (final entry in LanguageConstants.englishNumbers.entries) {
-      if (text.contains(entry.key)) {
-        // Check if it's followed by currency indicators
-        final pattern = RegExp(
-          r'${entry.key}\s*(?:cedis?|ghana\s*cedis?|ghc|gh₵|sidi|sika|₵)',
-          caseSensitive: false,
-        );
-        if (pattern.hasMatch(text) ||
-            RegExp(
-              r'(?:cedis?|ghana\s*cedis?|ghc|gh₵|sidi|sika|₵)\s*${entry.key}',
-              caseSensitive: false,
-            ).hasMatch(text)) {
-          return entry.value.toDouble();
-        }
+      if (lowerText.contains(entry.key)) {
+        return entry.value.toDouble();
+      }
+    }
+
+    // Check for Twi number words
+    for (final entry in LanguageConstants.twiNumbers.entries) {
+      if (lowerText.contains(entry.key)) {
+        return entry.value.toDouble();
       }
     }
 
@@ -78,8 +87,8 @@ class VoiceCommandParser {
         caseSensitive: false,
       ),
       RegExp(r'(\d+(?:\.\d{1,2})?)\s*(?:sidi|sika)', caseSensitive: false),
-      // Fallback: just find a number if no currency symbol
-      RegExp(r'(\d+(?:\.\d{1,2})?)'),
+      // Just find any standalone number as last resort
+      RegExp(r'\b(\d+(?:\.\d{1,2})?)\b'),
     ];
 
     for (final pattern in patterns) {
