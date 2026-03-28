@@ -13,11 +13,11 @@ class AudioRecordingService {
     if (await _recorder.hasPermission()) {
       final dir = await getTemporaryDirectory();
       _currentPath =
-          '${dir.path}/voice_recording_${DateTime.now().millisecondsSinceEpoch}.mp3';
+          '${dir.path}/voice_recording_${DateTime.now().millisecondsSinceEpoch}.wav';
 
       await _recorder.start(
         const RecordConfig(
-          encoder: AudioEncoder.aacLc,
+          encoder: AudioEncoder.wav,
           sampleRate: 16000,
           numChannels: 1,
         ),

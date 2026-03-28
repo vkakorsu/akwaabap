@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import '../constants/app_constants.dart';
@@ -19,28 +20,23 @@ class GhanaNlpClient {
       final uri = Uri.parse(
         '${AppConstants.asrBaseUrl}${AppConstants.asrEndpoint}',
       ).replace(queryParameters: {'language': language});
-      final request = http.MultipartRequest('POST', uri);
 
-      request.headers[AppConstants.apiKeyHeader] = apiKey;
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'audio',
-          audioFilePath,
-          contentType: http.MediaType('audio', 'aac'),
-        ),
+      // Read audio file as bytes
+      final file = File(audioFilePath);
+      final bytes = await file.readAsBytes();
+
+      final response = await _httpClient.post(
+        uri,
+        headers: {
+          AppConstants.apiKeyHeader: apiKey,
+          'Content-Type': 'audio/wav',
+        },
+        body: bytes,
       );
 
-      final streamedResponse = await _httpClient.send(request);
-      final response = await http.Response.fromStream(streamedResponse);
-
       if (response.statusCode == 200) {
-        // API may return plain text or JSON
-        final contentType = response.headers['content-type'] ?? '';
-        if (contentType.contains('json')) {
-          final body = jsonDecode(response.body);
-          return body['text'] ?? body['transcription'] ?? response.body;
-        }
-        return response.body; // Plain text response
+        // Return raw response body (API returns plain text)
+        return response.body.trim();
       } else {
         throw GhanaNlpException(
           'ASR failed with status ${response.statusCode}: ${response.body}',

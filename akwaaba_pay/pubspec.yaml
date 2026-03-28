@@ -37,6 +37,7 @@ dependencies:
   drift: ^2.24.0
   drift_flutter: ^0.2.4
   http: ^1.6.0
+  http_parser: ^4.0.2
   fl_chart: ^1.2.0
   flutter_secure_storage: ^9.2.4
   google_fonts: ^6.2.1
